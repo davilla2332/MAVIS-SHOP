@@ -1,0 +1,12 @@
+import {createClient} from '@supabase/supabase-js';
+const {VITE_SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,ADMIN_EMAIL,ADMIN_PASSWORD}=process.env;
+if(!VITE_SUPABASE_URL||!SUPABASE_SERVICE_ROLE_KEY||!ADMIN_EMAIL||!ADMIN_PASSWORD||ADMIN_PASSWORD.length<12) throw Error('Completa URL, service role, correo y contraseña de al menos 12 caracteres en .env.');
+const db=createClient(VITE_SUPABASE_URL,SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false}});
+const {data:existing,error:check}=await db.from('administrators').select('user_id');
+if(check) throw check;
+if(existing.length) throw Error('Ya existe el administrador único. No se creó ni modificó ninguna cuenta.');
+const {data,error}=await db.auth.admin.createUser({email:ADMIN_EMAIL,password:ADMIN_PASSWORD,email_confirm:true,user_metadata:{name:'admin',phone:''}});
+if(error) throw error;
+const {error:roleError}=await db.from('administrators').insert({singleton:true,user_id:data.user.id});
+if(roleError) throw roleError;
+console.log('Administrador único creado. Ingresa con admin y la contraseña configurada. Activa MFA desde Mi perfil.');
