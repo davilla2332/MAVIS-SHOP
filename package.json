@@ -1,0 +1,25 @@
+{
+  "name": "mavis-shop",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "admin": "node --env-file=.env.admin scripts/create-admin.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "prebuild": "node scripts/check-config.mjs",
+    "audit:security": "npm audit --audit-level=moderate"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.57.4"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.10",
+    "vite": "6.4.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
